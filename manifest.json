@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Keeply",
   "version": "1.0.0",
-  "description": "Automatically save and restore your browser tabs with grouping",
+  "description": "Save, organize, and restore all your Chrome tabs with a single click — group and name tabs for easy access anytime.",
   "permissions": ["tabs", "storage", "tabGroups"],
   "action": {
     "default_popup": "popup.html",
