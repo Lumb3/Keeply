@@ -20,6 +20,15 @@ const plainhtmlElement = (
   </h1>
 );
 
+function TextAndImg() {
+  return (
+    <div className="container">
+      <h1 className="header"> My text content </h1>
+      <img id="reactLogo" src="/react.svg"></img>
+    </div>
+  );
+}
+
 // Very first custom React component!
 function MainContent() {
   return <h1> React is great!</h1>;
@@ -30,7 +39,9 @@ root.render(
   // element, props, children
   //reactElement,
   //plainhtmlElement,
-  <div>
-    <MainContent />  {/*This is how we call custom component*/}
+  <div id="singleParentelement"> {/* The tag can be main */}
+    <MainContent /> {/*This is how we call custom component*/}
+    {plainhtmlElement} {/* The brackets allows us to navigate to Javascript*/}
+    <TextAndImg />
   </div>,
 );
