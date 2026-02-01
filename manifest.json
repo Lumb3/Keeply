@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Keeply",
+  "version": "1.0.0",
+  "description": "Automatically save and restore your browser tabs with grouping",
+  "permissions": ["tabs", "storage", "tabGroups"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  }
+}

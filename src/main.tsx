@@ -24,7 +24,7 @@ function TextAndImg() {
   return (
     <div className="container">
       <h1 className="header"> My text content </h1>
-      <img id="reactLogo" src="/react.svg"></img>
+      <img id="reactLogo" src="/assets/react.svg"></img>
     </div>
   );
 }
@@ -39,9 +39,12 @@ root.render(
   // element, props, children
   //reactElement,
   //plainhtmlElement,
-  <div id="singleParentelement"> {/* The tag can be main */}
+  <div id="singleParentelement">
+    {" "}
+    {/* The tag can be main */}
     <MainContent /> {/*This is how we call custom component*/}
     {plainhtmlElement} {/* The brackets allows us to navigate to Javascript*/}
     <TextAndImg />
+    {reactElement}
   </div>,
 );
