@@ -1,5 +1,3 @@
-Here’s a concise, professional GitHub README for **Keeply** in its development stage:
-
 ---
 
 # Keeply
@@ -32,5 +30,3 @@ Contributions and suggestions are welcome. Please open an issue or submit a pull
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
-
-If you want, I can also make an **even shorter “dev-ready” version** that focuses strictly on functionality and installation without extra sections. It would be ideal while the extension is still in development. Do you want me to do that?
