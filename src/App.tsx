@@ -14,8 +14,8 @@ export default function App() {
 
   return (
     <div>
-      {page === "popup" && <PopupPage navigate={navigate} />}
-      {page === "library" && <LibraryPage navigate={navigate} />}
+      {page === "popup" && <PopupPage onOpenLibrary={navigate} />}
+      {page === "library" && <LibraryPage onOpenPopup={navigate} />}
     </div>
   );
 }
