@@ -1,5 +1,5 @@
 // popup-page.tsx
-import { Layers, Search, FolderOpen, RotateCcw } from "lucide-react";
+import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
 import "../popup-animation.css";
 
 // Props for the LibraryPage
@@ -9,7 +9,7 @@ interface LibraryPageProps {
 
 export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
   return (
-    <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl popup-fade-in">
+    <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6 flex-shrink-0">
         <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center shadow-md">
@@ -41,10 +41,10 @@ export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
       {/* Primary Action */}
       <button
         type="button"
-        className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-medium transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-3 flex-shrink-0"
+        className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-3 flex-shrink-0"
       >
         <RotateCcw className="w-5 h-5" />
-        Save Current Session
+        Add a new tab group
       </button>
 
       {/* Secondary Actions */}
@@ -52,17 +52,17 @@ export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
         <button
           type="button"
           onClick={() => onOpenLibrary("library")}
-          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
+          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
         >
           <FolderOpen className="w-4 h-4" />
           Open Library
         </button>
         <button
           type="button"
-          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
+          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
         >
-          <Search className="w-4 h-4" />
-          Search
+          <History className="w-4 h-4" />
+          Show History
         </button>
       </div>
 
