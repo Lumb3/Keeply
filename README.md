@@ -1,5 +1,3 @@
----
-
 # Keeply
 
 Keeply is a Chrome extension that allows users to save, organize, and restore browser tabs efficiently. Users can group tabs, assign names, and restore them with a single click.
@@ -28,5 +26,3 @@ Contributions and suggestions are welcome. Please open an issue or submit a pull
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
----
