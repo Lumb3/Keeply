@@ -2,7 +2,6 @@
 import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
 import "../popup-animation.css";
 
-// Props for the LibraryPage
 interface LibraryPageProps {
   onOpenLibrary: (page: "popup" | "library") => void;
 }
@@ -28,7 +27,7 @@ export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
         </h2>
         <div className="flex gap-6">
           <div>
-            <div className="text-3xl font-bold text-violet-600">12</div>
+            <div className="text-3xl font-bold text-violet-600">2</div>
             <div className="text-xs text-slate-600 mt-1">Open Tabs</div>
           </div>
           <div>
@@ -38,7 +37,7 @@ export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
         </div>
       </div>
 
-      {/* Primary Action */}
+      {/* Rest of your component remains the same */}
       <button
         type="button"
         className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-3 flex-shrink-0"
