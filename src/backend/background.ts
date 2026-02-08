@@ -1,11 +1,7 @@
 // background.ts
-import { setupMessageHandler } from "../message-handler";
-import { getAllTabsCount } from "../backend/tab-manager";
+import { getAllTabsCount } from "./tab-manager";
 
 console.log("Background script loaded.");
-
-// Initialize message handler
-setupMessageHandler();
 
 // Initialize badge on startup
 updateBadge();

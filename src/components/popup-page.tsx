@@ -1,12 +1,44 @@
 // popup-page.tsx
 import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
+import { useState, useEffect } from "react";
 import "../popup-animation.css";
 
 interface LibraryPageProps {
   onOpenLibrary: (page: "popup" | "library") => void;
 }
 
-export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
+export default function MainPage ({ onOpenLibrary }: LibraryPageProps) {
+  const [tabCount, setTabCount] = useState<number>(0);
+  const [savedGroupsCount] = useState<number>(8); // TODO: Implement saved groups storage
+
+  useEffect(() => {
+    // Fetch tab count on component mount
+    const fetchTabCount = async () => {
+      try {
+        const tabs = await chrome.tabs.query({});
+        setTabCount(tabs.length);
+      } catch (error) {
+        console.error("Error fetching tab count:", error);
+      }
+    };
+
+    fetchTabCount();
+
+    // Listen for tab changes to update count in real-time
+    const handleTabChange = () => {
+      fetchTabCount();
+    };
+
+    chrome.tabs.onCreated.addListener(handleTabChange);
+    chrome.tabs.onRemoved.addListener(handleTabChange);
+
+    // Cleanup listeners on unmount
+    return () => {
+      chrome.tabs.onCreated.removeListener(handleTabChange);
+      chrome.tabs.onRemoved.removeListener(handleTabChange);
+    };
+  }, []);
+
   return (
     <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
       {/* Header */}
@@ -27,11 +59,13 @@ export default function LibraryPage({ onOpenLibrary }: LibraryPageProps) {
         </h2>
         <div className="flex gap-6">
           <div>
-            <div className="text-3xl font-bold text-violet-600">2</div>
+            <div className="text-3xl font-bold text-violet-600">{tabCount}</div>
             <div className="text-xs text-slate-600 mt-1">Open Tabs</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-indigo-600">8</div>
+            <div className="text-3xl font-bold text-indigo-600">
+              {savedGroupsCount}
+            </div>
             <div className="text-xs text-slate-600 mt-1">Saved Groups</div>
           </div>
         </div>
