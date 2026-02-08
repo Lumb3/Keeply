@@ -3,11 +3,11 @@ import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
 import { useState, useEffect } from "react";
 import "../popup-animation.css";
 
-interface LibraryPageProps {
-  onOpenLibrary: (page: "popup" | "library") => void;
+interface PageTransitionProps {
+  onTransitionPage: (page: "popup" | "library" | "addtab") => void; // property whose value must be a function
 }
 
-export default function MainPage ({ onOpenLibrary }: LibraryPageProps) {
+export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
   const [tabCount, setTabCount] = useState<number>(0);
   const [savedGroupsCount] = useState<number>(8); // TODO: Implement saved groups storage
 
@@ -75,6 +75,7 @@ export default function MainPage ({ onOpenLibrary }: LibraryPageProps) {
       <button
         type="button"
         className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-3 flex-shrink-0"
+        onClick={() => onTransitionPage("addtab")}
       >
         <RotateCcw className="w-5 h-5" />
         Add a new tab group
@@ -84,7 +85,7 @@ export default function MainPage ({ onOpenLibrary }: LibraryPageProps) {
       <div className="grid grid-cols-2 gap-3 mb-4 flex-shrink-0">
         <button
           type="button"
-          onClick={() => onOpenLibrary("library")}
+          onClick={() => onTransitionPage("library")}
           className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
         >
           <FolderOpen className="w-4 h-4" />
