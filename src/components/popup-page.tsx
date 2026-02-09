@@ -1,10 +1,11 @@
 // popup-page.tsx
-import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
+import { Layers, History, FolderOpen, RotateCcw, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getRecentTabGroups,
   getTabGroupsCount,
   formatRelativeTime,
+  deleteTabGroup,
   type TabGroup,
 } from "../backend/storage";
 import "../popup-animation.css";
@@ -79,7 +80,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
       purple: "bg-purple-100",
       red: "bg-red-100",
       green: "bg-green-100",
-      yellow: "bg-yellow-100",  
+      yellow: "bg-yellow-100",
       indigo: "bg-indigo-100",
       cyan: "bg-cyan-100",
       orange: "bg-orange-100",
@@ -104,6 +105,29 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
       }
     } catch (error) {
       console.error("Error opening tab group:", error);
+    }
+  };
+
+  const handleDeleteGroup = async (
+    e: React.MouseEvent,
+    groupId: string,
+    groupName: string
+  ) => {
+    // Prevent triggering the parent onClick (open group)
+    e.stopPropagation();
+
+    const confirmed = confirm(
+      `Are you sure you want to delete "${groupName}"?`
+    );
+
+    if (confirmed) {
+      try {
+        await deleteTabGroup(groupId);
+        // The UI will update automatically via storage change listener
+      } catch (error) {
+        console.error("Error deleting tab group:", error);
+        alert("Failed to delete group. Please try again.");
+      }
     }
   };
 
@@ -187,10 +211,19 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
               <div
                 key={group.id}
                 onClick={() => handleOpenGroup(group)}
-                className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer"
+                className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer group relative"
               >
+                {/* Delete Button - appears on hover */}
+                <button
+                  onClick={(e) => handleDeleteGroup(e, group.id, group.name)}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  title="Delete group"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                </button>
+
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="text-sm font-medium text-slate-700">
+                  <h4 className="text-sm font-medium text-slate-700 pr-8">
                     {group.name}
                   </h4>
                   <span className="text-xs text-slate-400">
