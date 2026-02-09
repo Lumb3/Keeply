@@ -1,15 +1,22 @@
 // popup-page.tsx
 import { Layers, History, FolderOpen, RotateCcw } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  getRecentTabGroups,
+  getTabGroupsCount,
+  formatRelativeTime,
+  type TabGroup,
+} from "../backend/storage";
 import "../popup-animation.css";
 
 interface PageTransitionProps {
-  onTransitionPage: (page: "popup" | "library" | "addtab") => void; // property whose value must be a function
+  onTransitionPage: (page: "popup" | "library" | "addtab") => void;
 }
 
 export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
   const [tabCount, setTabCount] = useState<number>(0);
-  const [savedGroupsCount] = useState<number>(8); // TODO: Implement saved groups storage
+  const [savedGroupsCount, setGroupCount] = useState<number>(0);
+  const [recentGroups, setRecentGroups] = useState<TabGroup[]>([]);
 
   useEffect(() => {
     // Fetch tab count on component mount
@@ -38,6 +45,67 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
       chrome.tabs.onRemoved.removeListener(handleTabChange);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchSavedGroups = async () => {
+      try {
+        const count = await getTabGroupsCount();
+        const recent = await getRecentTabGroups(3);
+        setGroupCount(count);
+        setRecentGroups(recent);
+      } catch (error) {
+        console.error("Error fetching saved groups:", error);
+      }
+    };
+
+    fetchSavedGroups();
+
+    // Listen for storage changes to update in real-time
+    const handleStorageChange = () => {
+      fetchSavedGroups();
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    // Cleanup listener on unmount
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+  }, []);
+
+  const getColorClasses = (color: string) => {
+    const colors: Record<string, string> = {
+      blue: "bg-blue-100",
+      purple: "bg-purple-100",
+      red: "bg-red-100",
+      green: "bg-green-100",
+      yellow: "bg-yellow-100",  
+      indigo: "bg-indigo-100",
+      cyan: "bg-cyan-100",
+      orange: "bg-orange-100",
+      pink: "bg-pink-100",
+      teal: "bg-teal-100",
+    };
+    return colors[color] || colors.blue;
+  };
+
+  const handleOpenGroup = async (group: TabGroup) => {
+    try {
+      // Open all tabs in the group
+      for (const tab of group.tabs) {
+        await chrome.tabs.create({ url: tab.url, active: false });
+      }
+      // Optionally activate the first tab
+      const tabs = await chrome.tabs.query({ currentWindow: true });
+      if (tabs.length > 0) {
+        await chrome.tabs.update(tabs[tabs.length - group.tabs.length].id!, {
+          active: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error opening tab group:", error);
+    }
+  };
 
   return (
     <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
@@ -71,7 +139,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         </div>
       </div>
 
-      {/* Rest of your component remains the same */}
+      {/* Add New Group Button */}
       <button
         type="button"
         className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-3 flex-shrink-0"
@@ -100,64 +168,51 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         </button>
       </div>
 
-      {/* Recent Sessions List - Scrollable area */}
+      {/* Recent Sessions List */}
       <div className="flex-1 overflow-y-auto -mx-6 px-6 pb-2">
         <div className="pt-4 border-t border-slate-200 space-y-3">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">
             Recent Sessions
           </h3>
 
-          {/* Example session items */}
-          <div className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer">
-            <div className="flex items-start justify-between mb-2">
-              <h4 className="text-sm font-medium text-slate-700">
-                Work Research
-              </h4>
-              <span className="text-xs text-slate-400">2h ago</span>
+          {recentGroups.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-sm text-slate-400">No saved groups yet</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Click "Add a new tab group" to get started
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                <div className="w-5 h-5 rounded bg-blue-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-green-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-orange-100 border-2 border-white"></div>
+          ) : (
+            recentGroups.map((group) => (
+              <div
+                key={group.id}
+                onClick={() => handleOpenGroup(group)}
+                className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="text-sm font-medium text-slate-700">
+                    {group.name}
+                  </h4>
+                  <span className="text-xs text-slate-400">
+                    {formatRelativeTime(group.timestamp)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {group.tabs.slice(0, 4).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-5 h-5 rounded ${getColorClasses(group.color)} border-2 border-white`}
+                      ></div>
+                    ))}
+                  </div>
+                  <span className="text-xs text-slate-500">
+                    {group.tabCount} tabs
+                  </span>
+                </div>
               </div>
-              <span className="text-xs text-slate-500">5 tabs</span>
-            </div>
-          </div>
-
-          <div className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer">
-            <div className="flex items-start justify-between mb-2">
-              <h4 className="text-sm font-medium text-slate-700">
-                Shopping List
-              </h4>
-              <span className="text-xs text-slate-400">5h ago</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                <div className="w-5 h-5 rounded bg-purple-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-pink-100 border-2 border-white"></div>
-              </div>
-              <span className="text-xs text-slate-500">3 tabs</span>
-            </div>
-          </div>
-
-          <div className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl p-3 hover:border-violet-300 transition-all cursor-pointer">
-            <div className="flex items-start justify-between mb-2">
-              <h4 className="text-sm font-medium text-slate-700">
-                Development
-              </h4>
-              <span className="text-xs text-slate-400">1d ago</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                <div className="w-5 h-5 rounded bg-red-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-yellow-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-cyan-100 border-2 border-white"></div>
-                <div className="w-5 h-5 rounded bg-teal-100 border-2 border-white"></div>
-              </div>
-              <span className="text-xs text-slate-500">7 tabs</span>
-            </div>
-          </div>
+            ))
+          )}
         </div>
       </div>
     </div>

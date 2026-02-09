@@ -8,6 +8,7 @@ import {
   CheckSquare,
   Square,
 } from "lucide-react";
+import { saveTabGroup } from "../backend/storage";
 
 interface AddNewTabPageProps {
   onOpenPopup: (page: "popup" | "library" | "addtab") => void;
@@ -25,6 +26,7 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
   const [groupName, setGroupName] = useState("");
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   // Fetch all open tabs on mount
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
           title: tab.title || "Untitled",
           url: tab.url || "",
           favIconUrl: tab.favIconUrl,
-          selected: true, // All tabs pre-selected by default
+          selected: true,
         }));
         setTabs(tabsWithSelection);
       } catch (error) {
@@ -50,7 +52,11 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
   }, []);
 
   const toggleTab = (id: number) => {
-    setTabs(tabs.map((tab) => (tab.id === id ? { ...tab, selected: !tab.selected } : tab)));
+    setTabs(
+      tabs.map((tab) =>
+        tab.id === id ? { ...tab, selected: !tab.selected } : tab
+      )
+    );
   };
 
   const selectAll = () => {
@@ -63,7 +69,7 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
 
   const selectedCount = tabs.filter((tab) => tab.selected).length;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!groupName.trim()) {
       alert("Please enter a group name");
       return;
@@ -74,34 +80,46 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
       return;
     }
 
-    const selectedTabs = tabs.filter((tab) => tab.selected);
+    setSaving(true);
 
-    // TODO: Save to chrome.storage.local
-    const newGroup = {
-      id: Date.now().toString(),
-      name: groupName.trim(),
-      tabs: selectedTabs.map((tab) => ({
-        title: tab.title,
-        url: tab.url,
-        favicon: tab.favIconUrl,
-      })),
-      tabCount: selectedTabs.length,
-      timestamp: new Date().toISOString(),
-      color: ["blue", "purple", "red", "green", "yellow", "indigo"][
-        Math.floor(Math.random() * 6)
-      ],
-    };
+    try {
+      const selectedTabs = tabs.filter((tab) => tab.selected);
 
-    console.log("Saving group:", newGroup);
+      const newGroup = {
+        id: Date.now().toString(),
+        name: groupName.trim(),
+        tabs: selectedTabs.map((tab) => ({
+          title: tab.title,
+          url: tab.url,
+          favicon: tab.favIconUrl,
+        })),
+        tabCount: selectedTabs.length,
+        timestamp: new Date().toISOString(),
+        color: ["blue", "purple", "red", "green", "yellow", "indigo"][
+          Math.floor(Math.random() * 6)
+        ],
+      };
 
-    // TODO: Optionally close tabs after saving
-    // const shouldClose = confirm("Close these tabs after saving?");
-    // if (shouldClose) {
-    //   selectedTabs.forEach(tab => chrome.tabs.remove(tab.id));
-    // }
+      // Save to chrome.storage.local
+      await saveTabGroup(newGroup);
 
-    // Return to popup
-    onOpenPopup("popup");
+      // Ask to close tabs (optional)
+      const shouldClose = confirm(
+        "Tab group saved! Would you like to close these tabs?"
+      );
+      if (shouldClose) {
+        const tabIds = selectedTabs.map((tab) => tab.id);
+        await chrome.tabs.remove(tabIds);
+      }
+
+      // Return to popup
+      onOpenPopup("popup");
+    } catch (error) {
+      console.error("Error saving tab group:", error);
+      alert("Failed to save tab group. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -186,7 +204,9 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
                         : "bg-white border-slate-300"
                     }`}
                   >
-                    {tab.selected && <Check className="w-3.5 h-3.5 text-white" />}
+                    {tab.selected && (
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    )}
                   </div>
                 </div>
 
@@ -232,11 +252,13 @@ export default function AddNewTabPage({ onOpenPopup }: AddNewTabPageProps) {
       {/* Save Button */}
       <button
         onClick={handleSave}
-        disabled={selectedCount === 0 || !groupName.trim()}
+        disabled={selectedCount === 0 || !groupName.trim() || saving}
         className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
       >
         <Save className="w-5 h-5" />
-        Save {selectedCount} {selectedCount === 1 ? "Tab" : "Tabs"}
+        {saving
+          ? "Saving..."
+          : `Save ${selectedCount} ${selectedCount === 1 ? "Tab" : "Tabs"}`}
       </button>
     </div>
   );
