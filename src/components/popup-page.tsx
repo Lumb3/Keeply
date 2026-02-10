@@ -55,7 +55,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         setGroupCount(count);
         setRecentGroups(recent);
       } catch (error) {
-        console.error("Error fetching saved groups:", error);
+        console.error("Error fetching saved sessions:", error);
       }
     };
 
@@ -111,13 +111,13 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
   const handleDeleteGroup = async (
     e: React.MouseEvent,
     groupId: string,
-    groupName: string
+    groupName: string,
   ) => {
     // Prevent triggering the parent onClick (open group)
     e.stopPropagation();
 
     const confirmed = confirm(
-      `Are you sure you want to delete "${groupName}"?`
+      `Are you sure you want to delete "${groupName}"?`,
     );
 
     if (confirmed) {
@@ -158,7 +158,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
             <div className="text-3xl font-bold text-indigo-600">
               {savedGroupsCount}
             </div>
-            <div className="text-xs text-slate-600 mt-1">Saved Groups</div>
+            <div className="text-xs text-slate-600 mt-1">Saved Sessions</div>
           </div>
         </div>
       </div>
@@ -216,10 +216,10 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
                 {/* Delete Button - appears on hover */}
                 <button
                   onClick={(e) => handleDeleteGroup(e, group.id, group.name)}
-                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute bottom-2 right-2 p-2 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 shadow-sm hover:shadow-md hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 active:scale-95 z-10"
                   title="Delete group"
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                  <Trash2 className="w-4 h-4 text-slate-500 group-hover:text-red-600 transition-colors" />
                 </button>
 
                 <div className="flex items-start justify-between mb-2">

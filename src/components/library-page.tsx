@@ -1,5 +1,5 @@
 // library-page.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   FolderOpen,
@@ -12,6 +12,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import { getTabGroupsCount } from "../backend/storage";
 
 interface LibraryPageProps {
   onOpenPopup: (page: "popup" | "library") => void;
@@ -84,7 +85,25 @@ export default function LibraryPage({ onOpenPopup }: LibraryPageProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [groupCount, setGroupCount] = useState<number>(0);
 
+  useEffect(() => {
+    const fetchGroupCount = async () => {
+      try {
+        const count = await getTabGroupsCount();
+        setGroupCount(count);
+      } catch (error) {
+        console.error("Error fetching group count:", error);
+      }
+    };
+
+    fetchGroupCount();
+    chrome.storage.onChanged.addListener(fetchGroupCount);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(fetchGroupCount);
+    };
+  }, []);
   const handleStartEdit = (group: TabGroup) => {
     setEditingId(group.id);
     setEditingName(group.name);
@@ -156,7 +175,8 @@ export default function LibraryPage({ onOpenPopup }: LibraryPageProps) {
         </div>
         <div className="flex items-center gap-2">
           <div className="px-4 py-2 rounded-xl bg-violet-50 text-violet-700 text-sm font-medium">
-            2 Sessions
+            {groupCount + " "} 
+            Sessions
           </div>
         </div>
       </div>
