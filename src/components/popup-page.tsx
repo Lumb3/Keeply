@@ -1,5 +1,5 @@
 // popup-page.tsx
-import { Layers, History, FolderOpen, RotateCcw, Trash2 } from "lucide-react";
+import { Layers, FolderOpen, RotateCcw, Trash2, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   getRecentTabGroups,
@@ -11,7 +11,7 @@ import {
 import "../popup-animation.css";
 
 interface PageTransitionProps {
-  onTransitionPage: (page: "popup" | "library" | "addtab") => void;
+  onTransitionPage: (page: "popup" | "library" | "addtab" | "settings") => void;
 }
 
 export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
@@ -185,10 +185,11 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         </button>
         <button
           type="button"
+           onClick={() => onTransitionPage("settings")}
           className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 transition-all hover:border-violet-300 flex items-center justify-center gap-2"
         >
-          <History className="w-4 h-4" />
-          Show History
+          <Settings className="w-4 h-4" />
+          Settings
         </button>
       </div>
 
