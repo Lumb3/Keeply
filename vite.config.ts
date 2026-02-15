@@ -7,7 +7,8 @@ import autoprefixer from 'autoprefixer'
 
 export default defineConfig({
   test: {
-    setupFiles: "./src/test/test.spec.ts",
+    environment: "jsdom",
+    setupFiles: 'src/test/setupTests.ts',
   },
   plugins: [
     react(),
