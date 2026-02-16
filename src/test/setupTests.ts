@@ -3,7 +3,7 @@ import { vi, beforeAll, afterEach } from "vitest";
 beforeAll(() => {
   globalThis.chrome = {
     tabs: {
-      query: vi.fn((queryInfo, callback) => {
+      query: vi.fn((_, callback) => {
         if (typeof callback === "function") {
           callback([{ id: 1 }, { id: 2 }]); // pretend 2 tabs open
         }
@@ -13,7 +13,7 @@ beforeAll(() => {
     },
     storage: {
       local: {
-        get: vi.fn((keys, callback) => {
+        get: vi.fn((_, callback) => {
           callback({}); // return empty object
         }),
         set: vi.fn(),
