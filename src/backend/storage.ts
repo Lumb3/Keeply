@@ -1,5 +1,4 @@
 // storage.ts
-/// <reference types="chrome" />
 
 export interface TabGroup {
   id: string;

@@ -1,7 +1,3 @@
-
-/// <reference types="chrome" />
-// tab-manager.ts
-
 export async function getAllTabsCount(): Promise<number> {
     try {
         const tabs = await chrome.tabs.query({});
