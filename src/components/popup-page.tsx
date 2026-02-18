@@ -1,5 +1,5 @@
 // popup-page.tsx
-import { Layers, RotateCcw, Trash2, Settings, SquarePen } from "lucide-react";
+import { Layers, Plus, Trash2, Settings, SquarePen } from "lucide-react"; // Changed RotateCcw to Plus
 import { useState, useEffect } from "react";
 import {
   getRecentTabGroups,
@@ -117,19 +117,19 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
   };
 
   return (
-    <div className="w-[360px] h-[500px] bg-white flex flex-col p-5 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
-      {/* Header — tightened mb from 6 → 4 to reclaim vertical space */}
-      <div className="flex items-center gap-3 mb-4 flex-shrink-0">
-        <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-md">
-          <Layers className="w-5 h-5 text-white" strokeWidth={2.5} />
+    <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-6 flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center shadow-md">
+          <Layers className="w-6 h-6 text-white" strokeWidth={2.5} />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Keeply</h1>
-          <p className="text-xs text-slate-500">Manage your browser sessions</p>
+          <h1 className="text-2xl font-semibold text-slate-900">Keeply</h1>
+          <p className="text-sm text-slate-500">Manage your browser sessions</p>
         </div>
       </div>
 
-      {/* Session Summary — tightened mb and padding */}
+      {/* Session Summary */}
       <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl p-4 mb-3 border border-violet-200/50 flex-shrink-0">
         <h2 className="text-xs font-medium text-slate-600 mb-2">
           Current Session
@@ -148,22 +148,22 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         </div>
       </div>
 
-      {/* Add New Group Button — tightened mb from 3 → 2 */}
+      {/* Add New Group Button - FIXED ICON: Replaced RotateCcw with Plus */}
       <button
         type="button"
-        className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-3 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2 mb-2 flex-shrink-0"
+        className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl px-6 py-4 font-bold transition-all hover:shadow-lg hover:shadow-violet-500/30 active:scale-[0.98] flex items-center justify-center gap-2 mb-3 flex-shrink-0"
         onClick={() => onTransitionPage("addtab")}
       >
-        <RotateCcw className="w-4 h-4" />
+        <Plus className="w-5 h-5" /> {/* Changed from RotateCcw */}
         Add a new tab group
       </button>
 
-      {/* Secondary Actions — tightened mb from 4 → 3 */}
+      {/* Secondary Actions */}
       <div className="grid grid-cols-2 gap-2 mb-3 flex-shrink-0">
         <button
           type="button"
           onClick={() => onTransitionPage("library")}
-          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 font-bold text-slate-700 text-sm transition-all hover:border-violet-300 flex items-center justify-center gap-2"
+          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 font-bold text-slate-700 text-sm transition-all hover:border-violet-300 active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <SquarePen className="w-4 h-4" />
           Edit Sessions
@@ -171,14 +171,14 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
         <button
           type="button"
           onClick={() => onTransitionPage("settings")}
-          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 font-bold text-slate-700 text-sm transition-all hover:border-violet-300 flex items-center justify-center gap-2"
+          className="bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 font-bold text-slate-700 text-sm transition-all hover:border-violet-300 active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <Settings className="w-4 h-4" />
           Settings
         </button>
       </div>
 
-      {/* Recent Sessions List — flex-1 + overflow-y-auto allows scrolling to "View all" */}
+      {/* Recent Sessions List */}
       <div className="flex-1 overflow-y-auto -mx-5 px-5 pb-2 min-h-0">
         <div className="pt-3 border-t border-slate-200 space-y-2">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">
@@ -203,7 +203,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
                   <button
                     onClick={(e) => handleDeleteGroup(e, group.id, group.name)}
                     className="group/btn absolute bottom-2 right-2 p-1.5 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 shadow-sm hover:shadow-md hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 active:scale-95 z-10"
-                    title="Delete group"
+                    aria-label={`Delete group "${group.name}"`} // Added for accessibility
                   >
                     <Trash2 className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-red-600 transition-colors" />
                   </button>
@@ -231,7 +231,7 @@ export default function PopupPage({ onTransitionPage }: PageTransitionProps) {
                   </div>
                 </div>
               ))}
-              {/* Static hint */}
+              {/* View all hint */}
               <p className="text-center text-xs text-slate-400 pt-1 pb-1">
                 Showing your 3 most recent —{" "}
                 <button
