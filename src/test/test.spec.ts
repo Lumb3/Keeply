@@ -14,4 +14,8 @@ describe("Arithmetic Operations: ", () => {
     test ('add 1 + 2 to not equal 4', () =>  {
         expect(sum(1, 2)).not.toBe(4);
     })
+
+    test ("subtract 2 - 1 to equal to 1", () => {
+        expect (subtract(2, 1)).toEqual(1);
+    })
 });
