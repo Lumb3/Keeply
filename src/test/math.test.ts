@@ -1,7 +1,27 @@
 import { sum, subtract } from '../sum';
-import { describe, expect, test, it } from 'vitest';
+import { describe, expect, test, it, vi, beforeAll, beforeEach } from 'vitest';
 import { getAllTabsCount } from "../backend/tab-manager";
+import { saveTabGroup } from "../backend/storage"
+//**
+// Every it() block starts fresh getAllTabsCount
+//  */
+beforeEach(() => {
+    vi.clearAllMocks(); // Clear mocks between tests
+});
 
+// mock function (stores an object -> key-value pair)
+vi.mock("../backend/tab-manager", () => ({
+    getAllTabsCount: vi
+        .fn()
+        .mockResolvedValueOnce(5)          // First call
+        .mockResolvedValueOnce({ name: "Alice" }) // Second call
+        .mockResolvedValue(0) // Third call
+}))
+//** Professional version – Just create the mock,
+//   Use the function in different ResolvedValues  */
+vi.mock("../backend/storage", () => ({
+    saveTabGroup: vi.fn()
+}))
 
 describe("Math utility tests: ", () => {
     describe("Arithmetic Operations: ", () => {
@@ -25,11 +45,35 @@ describe("Math utility tests: ", () => {
             expect(subtract(2, 1)).not.toBe(0);
         })
 
-        // Testing async function
-        it('fetch a user', async () => {
+        // Testing async function (it = test)
+        it('First call of the getAllTabsCount function', async () => {
+            // First call of the getAllTabsCount function
             const user = await getAllTabsCount();
-            expect (user).toBe(0);
+            expect(user).toBe(5);
         })
     });
 })
 
+// Using vi for mocking (replacing real Chrome with a fake version)
+const mockFn = vi.fn().mockReturnValue(42); // create a mock function
+mockFn('hello');
+expect(mockFn).toHaveBeenCalledWith('hello');
+expect(mockFn).toHaveBeenCalledTimes(1);
+expect(mockFn()).toBe(42); // the function mock returns value 42
+
+
+// Testing an async function:
+
+describe("Async function test", () => {
+    it("Second call of the getAllTabsCount function", async () => {
+        // Second call of the getAllTabsCount function
+        const user = await getAllTabsCount();
+        expect(user).toEqual({ name: "Alice" });
+        expect(getAllTabsCount).toHaveBeenCalledTimes(1);
+    })
+
+    it("Third call of the getAllTabsCount function", async () => {
+        const user = await getAllTabsCount();
+        expect(user).toBe(0); // Third call
+    })
+})
