@@ -8,7 +8,7 @@
 import { sum, subtract } from '../sum';
 import { describe, expect, test, it, vi, beforeEach, afterAll } from 'vitest';
 import { getAllTabsCount } from "../backend/tab-manager";
-import { saveTabGroup } from "../backend/storage"
+import { saveTabGroup } from "../backend/storage";
 
 //**
 // Every it() block starts fresh getAllTabsCount
@@ -16,6 +16,7 @@ import { saveTabGroup } from "../backend/storage"
 beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks between tests
 });
+
 
 // mock function (stores an object -> key-value pair)
 vi.mock("../backend/tab-manager", () => ({
@@ -25,6 +26,7 @@ vi.mock("../backend/tab-manager", () => ({
         .mockResolvedValueOnce({ name: "Alice" }) // Second call
         .mockResolvedValue(0) // Third call
 }))
+
 //** Professional version – Just create the mock,
 //   Use the function in different ResolvedValues  */
 vi.mock("../backend/storage", () => ({
