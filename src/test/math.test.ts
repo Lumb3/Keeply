@@ -8,7 +8,6 @@
 import { sum, subtract } from '../sum';
 import { describe, expect, test, it, vi, beforeEach, afterAll } from 'vitest';
 import { getAllTabsCount } from "../backend/tab-manager";
-import { saveTabGroup } from "../backend/storage";
 
 //**
 // Every it() block starts fresh getAllTabsCount

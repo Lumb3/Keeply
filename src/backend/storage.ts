@@ -18,10 +18,10 @@ export async function saveTabGroup(group: TabGroup): Promise<void> {
   try {
     const result = await chrome.storage.local.get("tabGroups");
     const existingGroups: TabGroup[] = (result.tabGroups as TabGroup[]) || [];
-    
+
     // Add new group to the beginning of the array
     const updatedGroups = [group, ...existingGroups];
-    
+
     await chrome.storage.local.set({ tabGroups: updatedGroups });
     console.log("Tab group saved successfully:", group);
   } catch (error) {
@@ -34,7 +34,9 @@ export async function saveTabGroup(group: TabGroup): Promise<void> {
 export async function getAllTabGroups(): Promise<TabGroup[]> {
   try {
     const result = await chrome.storage.local.get("tabGroups");
-    return (result.tabGroups as TabGroup[]) || [];
+    const groups = (result.tabGroups as TabGroup[]) || [];
+    console.log('getAllTabGroups -> ', groups);
+    return groups;
   } catch (error) {
     console.error("Error getting tab groups:", error);
     return [];
@@ -52,9 +54,9 @@ export async function deleteTabGroup(id: string): Promise<void> {
   try {
     const result = await chrome.storage.local.get("tabGroups");
     const existingGroups: TabGroup[] = (result.tabGroups as TabGroup[]) || [];
-    
+
     const updatedGroups = existingGroups.filter(group => group.id !== id);
-    
+
     await chrome.storage.local.set({ tabGroups: updatedGroups });
     console.log("Tab group deleted:", id);
   } catch (error) {
@@ -68,12 +70,14 @@ export async function updateTabGroup(updatedGroup: TabGroup): Promise<void> {
   try {
     const result = await chrome.storage.local.get("tabGroups");
     const existingGroups: TabGroup[] = (result.tabGroups as TabGroup[]) || [];
-    
-    const updatedGroups = existingGroups.map(group => 
+
+    const updatedGroups = existingGroups.map(group =>
       group.id === updatedGroup.id ? updatedGroup : group
     );
-    
-    await chrome.storage.local.set({ tabGroups: updatedGroups });
+
+    await chrome.storage.local.set({ tabGroups: updatedGroups }).then(() => {
+      console.log("Tab Group is updated!");
+    });
     console.log("Tab group updated:", updatedGroup);
   } catch (error) {
     console.error("Error updating tab group:", error);
@@ -92,11 +96,11 @@ export function formatRelativeTime(timestamp: string): string {
   const now = new Date();
   const past = new Date(timestamp);
   const diffMs = now.getTime() - past.getTime();
-  
+
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
-  
+
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;

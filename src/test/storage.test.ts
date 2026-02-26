@@ -10,6 +10,7 @@ const makeGroup = (id: string): TabGroup => ({
     tabs: [{ title: "T", url: "https://test.com" }],
 });
 
+
 describe("saveTabGroup", () => {
     beforeEach(() => {
         (globalThis as any).__testChrome.resetDb();
@@ -20,4 +21,5 @@ describe("saveTabGroup", () => {
         await saveTabGroup(makeGroup("1"));
         expect((await getAllTabGroups()).map(g => g.id)).toEqual(["1"]);
     })
+    
 });
