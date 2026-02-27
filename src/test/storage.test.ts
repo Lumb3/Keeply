@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { saveTabGroup, getAllTabGroups, type TabGroup } from "../backend/storage";
+import { saveTabGroup, getAllTabGroups, deleteTabGroup, type TabGroup } from "../backend/storage";
 
 const makeGroup = (id: string): TabGroup => ({
     id,
@@ -10,6 +10,9 @@ const makeGroup = (id: string): TabGroup => ({
     tabs: [{ title: "T", url: "https://test.com" }],
 });
 
+async function getGroupCount() {
+    return (await getAllTabGroups()).length;
+}
 
 describe("saveTabGroup", () => {
     beforeEach(() => {
@@ -21,5 +24,24 @@ describe("saveTabGroup", () => {
         await saveTabGroup(makeGroup("1"));
         expect((await getAllTabGroups()).map(g => g.id)).toEqual(["1"]);
     })
-    
+
+    it("deletes a tab group", async () => {
+        for (const id of ["1", "2", "3", "4"]) {
+            await saveTabGroup(makeGroup(id));
+        }
+        await deleteTabGroup("1");
+        expect(await getGroupCount()).toBe(3);
+
+        const ids = (await getAllTabGroups()).map(g => g.id).sort();
+        expect(ids).toEqual(["2", "3", "4"]);
+    })
+
+    it("adds multiple groups correctly", async () => {
+        for (const i of ["1", "2"]) {
+            await saveTabGroup(makeGroup(i));
+        }
+
+        const ids = (await getAllTabGroups()).map(g => g.id);
+        expect(ids).toEqual(["2", "1"]);
+    })
 });

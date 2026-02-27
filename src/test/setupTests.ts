@@ -50,7 +50,7 @@ const db: Record<string, any> = {};
   },
 };
 
-// Optional helpers for tests
+// Helpers for tests
 (globalThis as any).__testChrome = {
   resetDb: () => {
     for (const k of Object.keys(db)) delete db[k];
