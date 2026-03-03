@@ -85,10 +85,16 @@ export async function updateTabGroup(updatedGroup: TabGroup): Promise<void> {
   }
 }
 
-// Get count of saved groups
-export async function getTabGroupsCount(): Promise<number> {
-  const groups = await getAllTabGroups();
-  return groups.length;
+// Get count of saved groups (returns a promise)
+export function getTabGroupsCount(): Promise<number> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const groups = await getAllTabGroups();
+      resolve(groups.length);
+    } catch (error) {
+      reject(error);
+    }
+  })
 }
 
 // Format timestamp to relative time (e.g., "2h ago")

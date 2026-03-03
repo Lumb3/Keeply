@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { saveTabGroup, getAllTabGroups, deleteTabGroup, updateTabGroup, type TabGroup } from "../backend/storage";
+import { saveTabGroup, getAllTabGroups, deleteTabGroup, updateTabGroup, getTabGroupsCount, type TabGroup } from "../backend/storage";
 
 const makeGroup = (id: string): TabGroup => ({
     id,
@@ -46,8 +46,8 @@ describe("Tests for storage-managing methods", () => {
     })
 
     it("updates an existing tab group by id", async () => {
-        for (const i of ["1", "2"]) {
-            await saveTabGroup(makeGroup(i));
+        for (const id of ["1", "2"]) {
+            await saveTabGroup(makeGroup(id));
         }
 
         const updated: TabGroup = {
@@ -73,5 +73,16 @@ describe("Tests for storage-managing methods", () => {
         const tabGroupCount_Equals1: TabGroup[] = groups.filter(g => g.tabCount === 1); // Create a new array with TabGroup interface, filtering tabCount === 1
         expect(tabGroupCount_Equals1.length).toBe(1);
         expect(tabGroupCount_Equals1[0].id).toBe("2");
+    })
+    it("gets the expected tab group count", async () => {
+        for (const id of ["1", "2"]) {
+            await saveTabGroup(makeGroup(id));
+        }
+        //** Good practice: Do not use try, catch block when writing tests */
+        const tabGroupCount = await getTabGroupsCount();
+        console.log("Successfully catched the tab group count: ", tabGroupCount);
+        expect(tabGroupCount).toBe(2);
+        await saveTabGroup(makeGroup("10"));
+        await expect(getTabGroupsCount()).resolves.toBe(3);
     })
 });
