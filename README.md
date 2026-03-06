@@ -112,7 +112,7 @@ The mock replaces `chrome.storage.local` with an in-memory store, letting the te
 
 ## Images
 
-<img src="imgs/popup-page.png" width="320" /> <img src="imgs/settings-page.png" width="320" /> <img src="imgs/library.png" width="320" />
+<img src="imgs/popup-page.png" width="320" /> <img src="imgs/settings-page.png" width="320" /> <img src="imgs/library.png" width="320" /> <img src="imgs/add-tab.png" width="320" />
 
 ## Contributing
 
