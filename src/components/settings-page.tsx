@@ -2,7 +2,7 @@ interface SettingsPageProps {
   onOpenPopup: (page: "popup" | "settings") => void;
 }
 function displayMessage() {
-  return "Hello World!";
+  return "Hello World!" + 10;
 }
 export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
   return (
