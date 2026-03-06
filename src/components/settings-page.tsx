@@ -97,7 +97,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
     await chrome.storage.local.set({ appSettings: updated });
   };
 
-  // ---------- Export all ----------
+  // Export all
   const handleExportAll = async () => {
     try {
       const groups = await getAllTabGroups();
@@ -120,7 +120,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
     }
   };
 
-  // ---------- Import ----------
+  // Import 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -154,7 +154,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
     }
   };
 
-  // ---------- Clear all ----------
+  // Clear all 
   const handleClearAll = async () => {
     try {
       const groups = await getAllTabGroups();
@@ -212,7 +212,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
 
-        {/* ── Behaviour ────────────────────────────── */}
+        {/* Behaviour */}
         <section>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">
             Behaviour
@@ -301,7 +301,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
           </div>
         </section>
 
-        {/* ── Data & Storage ────────────────────────── */}
+        {/* Data & Storage Section */}
         <section>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">
             Data &amp; Storage

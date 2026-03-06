@@ -68,32 +68,64 @@ The mock replaces `chrome.storage.local` with an in-memory store, letting the te
 
 ```ts
 // vitest.setup.ts
-const store: Record<string, unknown> = {};
-
-globalThis.chrome = {
-  storage: {
-    local: {
-      get: vi.fn(async (keys) => {
-        if (keys === null) return { ...store };
-        const result: Record<string, unknown> = {};
-        for (const key of [keys].flat()) result[key] = store[key];
-        return result;
+(globalThis as any).chrome = {
+  tabs: {
+    query: vi.fn(async () => []),
+    create: vi.fn(async () => ({ id: 1 })),
+    update: vi.fn(async () => ({})),
+    onCreated: {
+      addListener: vi.fn((cb: () => void) => createdListeners.push(cb)),
+      removeListener: vi.fn((cb: () => void) => {
+        const i = createdListeners.indexOf(cb);
+        if (i >= 0) createdListeners.splice(i, 1);
       }),
-      set: vi.fn(async (items) => Object.assign(store, items)),
-      getBytesInUse: vi.fn((_keys, cb) => cb(0)),
+    },
+    onRemoved: {
+      addListener: vi.fn((cb: () => void) => removedListeners.push(cb)),
+      removeListener: vi.fn((cb: () => void) => {
+        const i = removedListeners.indexOf(cb);
+        if (i >= 0) removedListeners.splice(i, 1);
+      }),
     },
   },
-} as unknown as typeof chrome;
+  storage: {
+    local: {
+      get: vi.fn(async (key: string) => ({ [key]: db[key] })),
+      set: vi.fn(async (obj: Record<string, any>) => {
+        Object.assign(db, obj);
+      }),
+    },
+    onChanged: {
+      addListener: vi.fn((cb: () => void) => storageChangedListeners.push(cb)),
+      removeListener: vi.fn((cb: () => void) => {
+        const i = storageChangedListeners.indexOf(cb);
+        if (i >= 0) storageChangedListeners.splice(i, 1);
+      }),
+    },
+  },
+  action: {
+    setBadgeText: vi.fn(),
+    setBadgeBackgroundColor: vi.fn(),
+  },
+};
 ```
+
+## Images
+
+<img src="imgs/popup-page.png" width="320" />
+<img src="imgs/settings-page.png" width="320" />
+<img src="imgs/library.png" width="320" />
 
 ## Contributing
 
 Contributions and suggestions are welcome. Please open an issue or submit a pull request for improvements.
+
 1. Fork the project
-2. Create a feature branch (git checkout -b ...)
-3. Commit your changes (git commit -m "...")
-4. Push to the branch (git push origin ...)
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m "Add my feature"`)
+4. Push to the branch (`git push origin feature/my-feature`)
 5. Open a pull request
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
