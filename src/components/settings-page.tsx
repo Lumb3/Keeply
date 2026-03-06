@@ -1,7 +1,9 @@
 interface SettingsPageProps {
   onOpenPopup: (page: "popup" | "settings") => void;
 }
-
+function displayMessage() {
+  return "Hello World!";
+}
 export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
   return (
     <div className="w-[360px] h-[500px] bg-white flex flex-col p-6 rounded-3xl border border-slate-200 overflow-hidden popup-fade-in">
@@ -15,6 +17,7 @@ export default function SettingsPage({ onOpenPopup }: SettingsPageProps) {
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Click Here to go back to Popup
+        {displayMessage()}
       </button>
     </div>
   );
