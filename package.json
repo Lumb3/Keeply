@@ -33,7 +33,7 @@
     "jsdom": "^29.1.1",
     "postcss": "^8.5.20",
     "tailwindcss": "^4.3.3",
-    "typescript-eslint": "^8.64.0",
+    "typescript-eslint": "^8.65.0",
     "vite": "^8.1.5",
     "vite-plugin-static-copy": "^4.1.1",
     "vitest": "^4.1.10"
